@@ -61,9 +61,9 @@ func matchLine(line []byte, pattern string) (bool, error) {
 		var start int
 		isNegativeGroup := pattern[1] == '^'
 		if isNegativeGroup {
-			start = 1
-		} else {
 			start = 2
+		} else {
+			start = 1
 		}
 
 		accept := pattern[start : len(pattern)-1]
