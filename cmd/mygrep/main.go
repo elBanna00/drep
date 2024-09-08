@@ -5,7 +5,13 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"unicode/utf8"
+)
+
+const (
+	DIGITS       = "\\d"
+	ALPHANUMERIC = "\\w"
 )
 
 // Ensures gofmt doesn't remove the "bytes" import above (feel free to remove this!)
@@ -45,9 +51,11 @@ func matchLine(line []byte, pattern string) (bool, error) {
 	}
 
 	var ok bool
-	if pattern == "\\d" {
+	if pattern == DIGITS {
 		ok = bytes.ContainsAny(line, "0123456789")
-	} else {
+	} else if pattern == ALPHANUMERIC {
+		ok = regexp.MustCompile("^[a-zA-Z0-9_]*$").MatchString(string(line))
+	}	else {
 		// Uncomment this to pass the first stage
 		ok = bytes.ContainsAny(line, pattern)
 	}
