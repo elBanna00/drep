@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -50,12 +51,20 @@ func matchLine(line []byte, pattern string) (bool, error) {
 		return false, fmt.Errorf("unsupported pattern: %q", pattern)
 	}
 
+	isGroup := len(pattern) > 3 && pattern[0] == '[' && pattern[len(pattern)-1] == ']'
 	var ok bool
 	if pattern == DIGITS {
 		ok = bytes.ContainsAny(line, "0123456789")
 	} else if pattern == ALPHANUMERIC {
 		ok = regexp.MustCompile("^[a-zA-Z0-9_]*$").MatchString(string(line))
-	}	else {
+	} else if isGroup {
+
+		accept := pattern[1 : len(pattern)-1]
+
+		if strings.IndexAny(string(line), accept) != -1 {
+			os.Exit(0)
+		}
+	} else {
 		// Uncomment this to pass the first stage
 		ok = bytes.ContainsAny(line, pattern)
 	}
