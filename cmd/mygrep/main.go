@@ -45,9 +45,12 @@ func matchLine(line []byte, pattern string) (bool, error) {
 	}
 
 	var ok bool
-
-	// Uncomment this to pass the first stage
-	ok = bytes.ContainsAny(line, pattern)
+	if pattern == "/d" {
+		ok = bytes.ContainsAny(line, "0123456789")
+	} else {
+		// Uncomment this to pass the first stage
+		ok = bytes.ContainsAny(line, pattern)
+	}
 
 	return ok, nil
 }
