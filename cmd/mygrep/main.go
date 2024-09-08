@@ -58,10 +58,19 @@ func matchLine(line []byte, pattern string) (bool, error) {
 	} else if pattern == ALPHANUMERIC {
 		ok = regexp.MustCompile("^[a-zA-Z0-9_]*$").MatchString(string(line))
 	} else if isGroup {
+		var start int
+		isNegativeGroup := pattern[1] == '^'
+		if isNegativeGroup {
+			start = 2
+		} else {
+			start = 1
+		}
 
-		accept := pattern[1 : len(pattern)-1]
+		accept := pattern[start : len(pattern)-1]
 
-		if strings.IndexAny(string(line), accept) != -1 {
+		if strings.IndexAny(string(line), accept) != -1 && !isNegativeGroup {
+			os.Exit(0)
+		} else if strings.IndexAny(string(line), accept) == -1 && isNegativeGroup {
 			os.Exit(0)
 		}
 	} else {
